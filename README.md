@@ -1,4 +1,5 @@
-# Augmenting Acceptability Prediction - Stanford CS 224N Project
+# Augmenting Acceptability Prediction
+# Stanford CS 224N Project
 
 ## Baselines
 
