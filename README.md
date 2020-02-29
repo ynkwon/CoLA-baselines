@@ -1,4 +1,6 @@
-# CoLA Baselines
+# Augmenting Acceptability Prediction - Stanford CS 224N Project
+
+## Baselines
 
 Baselines accompanying paper [Neural Network Acceptability Judgments](https://www.nyu.edu/projects/bowman/neural_network_acceptability.pdf). Check the [CoLA website](https://nyu-mll.github.io/CoLA) to download The Corpus of Linguistic Acceptability (CoLA), for more information, and for a demo model.
 
