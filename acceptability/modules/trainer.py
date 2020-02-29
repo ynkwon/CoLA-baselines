@@ -240,7 +240,7 @@ class Trainer:
             else:
                 loss = nn.functional.binary_cross_entropy(output, y.float(),
                                                           size_average=False)
-            total_loss = loss.data[0]
+            total_loss = loss.data.item()
             total += len(y)
             outputs.extend([float(o) for o in output])
             output = (output > 0.5).long()
