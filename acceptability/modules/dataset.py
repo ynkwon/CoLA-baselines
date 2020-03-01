@@ -1,16 +1,19 @@
 import os
 import sys
+import numpy
 import torch
 from torch.utils.data import Dataset
 from torchtext import vocab, data
 from collections import defaultdict
 from acceptability.utils import pad_sentences
+from transformers import BertTokenizer
 
 
 class AcceptabilityDataset(Dataset):
     def __init__(self, args, path, vocab):
         self.pairs = []
         self.sentences = []
+        self.sentences_unpadded = []
         self.actual = []
         self.args = args
         if not os.path.exists(path):
@@ -18,6 +21,8 @@ class AcceptabilityDataset(Dataset):
             raise Exception("Path %s does not exist" % path)
 
         self.vocab = vocab
+        self.path = path
+        self.BertTokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
         with open(path, 'r') as f:
             for line in f:
@@ -26,11 +31,29 @@ class AcceptabilityDataset(Dataset):
                 if len(line) >= 4:
                     self.pairs.append((int(line[1]), line[0]))
                     self.actual.append(line[3])
-                    self.sentences.append(self.preprocess(line[3].strip()))
+                    if ("raw" in self.path):
+                        tokenized = self.BertTokenizer.encode(line[3], add_special_tokens=True)
+                        self.sentences_unpadded.append(tokenized)
+                        #breakpoint()
+                        processed = self.BertTokenizer.prepare_for_model(tokenized, pad_to_max_length = True, max_length = self.args.crop_pad_length)
+                        self.sentences.append(numpy.array(processed["input_ids"]))
+
+                    else:
+                        self.sentences.append(self.preprocess(line[3].strip()))
 
         # TODO: Maybe try later using collate_fn?
-        self.sentences, self.sizes = pad_sentences(self.sentences, self.vocab,
-                                                   self.args.crop_pad_length)
+            if("raw" in self.path):
+
+                #breakpoint()
+                #breakpoint()
+                self.sizes = [len(x) for x in self.sentences_unpadded]
+                #self.sentences = processed["input_ids"]
+                #breakpoint()
+            else:
+                self.sentences, self.sizes = pad_sentences(self.sentences, self.vocab,
+                                                        self.args.crop_pad_length)
+
+
 
     def preprocess(self, line):
         tokenizer = lambda x: x
@@ -53,7 +76,6 @@ class AcceptabilityDataset(Dataset):
 
     def __getitem__(self, index):
         return self.sentences[index], self.pairs[index][0], self.pairs[index][1]
-
 
 def nltk_tokenize(sentence):
     import nltk
@@ -222,4 +244,3 @@ class LMEvalDataset():
 
     def preprocess(self, x):
         return [self.vocab.SOS_TOKEN] + x + [self.vocab.EOS_TOKEN]
-

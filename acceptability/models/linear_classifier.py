@@ -92,4 +92,3 @@ def get_encoder_instance(encoder_type, encoding_size, embedding_size,
             p.requires_grad = False
 
     return encoder
-

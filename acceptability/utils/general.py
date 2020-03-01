@@ -8,6 +8,7 @@ from acceptability.models import ELMOClassifier
 from acceptability.models import LSTMPoolingClassifierWithELMo
 from acceptability.models import LinearClassifierWithEncoder
 from acceptability.models import CBOWClassifier
+from acceptability.models import BertClassifier
 from acceptability.models import LSTMLanguageModel
 
 
@@ -36,6 +37,15 @@ def get_model_instance(args):
             dropout=args.dropout,
             gpu=args.gpu
         )
+
+    elif args.model == "bert_classifier":
+        # TODO: Add support for encoder here later
+        return BertClassifier(
+            hidden_size=args.hidden_size,
+            encoding_size=args.encoding_size,
+            dropout=args.dropout,
+            )
+
     elif args.model == "cbow_classifier":
         return CBOWClassifier(
             hidden_size=args.hidden_size,
@@ -137,4 +147,3 @@ def pad_sentences(sentences, vocab, crop_length):
         array[i, :len(words)] = words
 
     return array, sizes
-
