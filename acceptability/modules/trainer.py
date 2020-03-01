@@ -275,7 +275,7 @@ class Trainer:
                 out_file.write(str(x) + "\n")
             out_file.close()
 
-        return correct / total * 100, avg_loss, \
+        return correct.item() / total * 100, avg_loss, \
                self.meter.matthews(), self.meter.confusion()
 
     def print_epoch_info(self):

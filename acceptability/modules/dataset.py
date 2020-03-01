@@ -7,6 +7,7 @@ from torchtext import vocab, data
 from collections import defaultdict
 from acceptability.utils import pad_sentences
 from transformers import BertTokenizer
+import codecs
 
 
 class AcceptabilityDataset(Dataset):
@@ -24,7 +25,7 @@ class AcceptabilityDataset(Dataset):
         self.path = path
         self.BertTokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
-        with open(path, 'r') as f:
+        with codecs.open(path, 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.split("\t")
 
@@ -34,7 +35,6 @@ class AcceptabilityDataset(Dataset):
                     if ("raw" in self.path):
                         tokenized = self.BertTokenizer.encode(line[3], add_special_tokens=False)
                         self.sentences_unpadded.append(tokenized)
-                        #breakpoint()
                         processed = self.BertTokenizer.prepare_for_model(tokenized, pad_to_max_length = True, max_length = self.args.crop_pad_length)
                         self.sentences.append(numpy.array(processed["input_ids"]))
 
@@ -44,16 +44,11 @@ class AcceptabilityDataset(Dataset):
         # TODO: Maybe try later using collate_fn?
             if("raw" in self.path):
 
-                #breakpoint()
-                #breakpoint()
                 self.sizes = [len(x) for x in self.sentences_unpadded]
-                #self.sentences = processed["input_ids"]
-                #breakpoint()
             else:
                 self.sentences, self.sizes = pad_sentences(self.sentences, self.vocab,
                                                         self.args.crop_pad_length)
 
-            #breakpoint()
 
 
     def preprocess(self, line):
@@ -139,7 +134,7 @@ class Vocab:
 
         index = len(self.itos)
 
-        with open(vocab_path, 'r') as f:
+        with open(vocab_path, 'r', encoding='utf-8') as f:
             for line in f:
                 self.itos.append(line.strip())
                 self.stoi[line.strip()] = index
@@ -187,7 +182,7 @@ class LMDataset():
         self.vocab = Vocab(vocab_path)
 
         num_tokens = 0
-        with open(dataset_path, 'r') as f:
+        with open(dataset_path, 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.split("\t")
                 if len(line) >= 4:
@@ -197,7 +192,7 @@ class LMDataset():
         self.tokens = torch.LongTensor(num_tokens)
 
         num_tokens = 0
-        with open(dataset_path, 'r') as f:
+        with open(dataset_path, 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.split("\t")
 
@@ -235,9 +230,6 @@ class LMEvalDataset():
                 if len(line) >= 4:
                     words = self.preprocess(line[3].strip().split(' '))
                     self.sentences.append([self.vocab.stoi[x] for x in words])
-
-        # # TODO: Maybe try later using collate_fn?
-        # self.sentences, self.sizes = pad_sentences(self.sentences, self.vocab)
 
 
     def get_vocab_size(self):
