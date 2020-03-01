@@ -134,8 +134,9 @@ class Trainer:
                     x = x.cuda()
                     y = y.cuda()
 
-                x = self.embedding(x)
-
+                #breakpoint()
+                if(self.args.model != "bert_classifier"):
+                    x = self.embedding(x)
                 self.optimizer.zero_grad()
 
                 output = self.model(x)
@@ -220,7 +221,8 @@ class Trainer:
                 x = x.cuda()
                 y = y.cuda()
 
-            x = self.embedding(x)
+            if(self.args.model != "bert_classifier"):
+                x = self.embedding(x)
 
             output = self.model(x)
 

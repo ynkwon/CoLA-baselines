@@ -32,7 +32,7 @@ class AcceptabilityDataset(Dataset):
                     self.pairs.append((int(line[1]), line[0]))
                     self.actual.append(line[3])
                     if ("raw" in self.path):
-                        tokenized = self.BertTokenizer.encode(line[3], add_special_tokens=True)
+                        tokenized = self.BertTokenizer.encode(line[3], add_special_tokens=False)
                         self.sentences_unpadded.append(tokenized)
                         #breakpoint()
                         processed = self.BertTokenizer.prepare_for_model(tokenized, pad_to_max_length = True, max_length = self.args.crop_pad_length)
@@ -53,6 +53,7 @@ class AcceptabilityDataset(Dataset):
                 self.sentences, self.sizes = pad_sentences(self.sentences, self.vocab,
                                                         self.args.crop_pad_length)
 
+            #breakpoint()
 
 
     def preprocess(self, line):
