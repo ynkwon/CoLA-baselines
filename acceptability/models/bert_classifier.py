@@ -27,11 +27,12 @@ class BertEncoder():
         return torch.mean(outputs, dim=1)
 
     def maxpool_embedding(self, input_sentence):
-        input_ids = torch.tensor(self.tokenizer.encode(input_sentence, add_special_tokens=True)).unsqueeze(0)  # Batch size 1
-        outputs = self.model(input_ids)[0]
-        shape = np.shape(outputs)
-        mp = nn.AdaptiveMaxPool2d((shape[2]))
-        return mp(outputs).squeeze()
+        input_ids = input_sentence
+        #torch.tensor(self.tokenizer.encode(input_sentence, add_special_tokens=True)).unsqueeze(0)  # Batch size 1
+        # outputs = self.model(input_ids)[0]
+        # shape = np.shape(outputs)
+        # mp = nn.AdaptiveMaxPool2d((shape[2]))
+        return torch.max(outputs, dim=1)
 
 class BertClassifier(nn.Module):
     def __init__(self, hidden_size, encoding_size, dropout=0.5):
