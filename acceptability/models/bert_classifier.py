@@ -30,7 +30,7 @@ class BertClassifier(nn.Module):
         self.encoder = BertEncoder()
 
     def forward(self, x):
-        encoding = self.encoder.average_embedding(x)
+        encoding = self.encoder.maxpool_embedding(x)
         output = self.classifier(encoding)
         return output, None
 
