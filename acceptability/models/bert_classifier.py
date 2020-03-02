@@ -24,13 +24,18 @@ class BertEncoder():
         return torch.max(outputs, dim=1)
 
 class BertClassifier(nn.Module):
-    def __init__(self, hidden_size, encoding_size, dropout=0.5):
+    def __init__(self, hidden_size, encoding_size, dropout=0.5, pool='max'):
         super(BertClassifier, self).__init__()
         self.classifier = LinearClassifier(hidden_size, 384, dropout)
         self.encoder = BertEncoder()
+        self.pool = pool
 
     def forward(self, x):
-        encoding = self.encoder.maxpool_embedding(x)
+        if self.pool == 'max':
+            encoding = self.encoder.maxpool_embedding(x)
+        else:
+            encoding = self.encoder.average_embedding(x)
+        
         output = self.classifier(encoding)
         return output, None
 

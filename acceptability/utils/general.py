@@ -44,6 +44,7 @@ def get_model_instance(args):
             hidden_size=args.hidden_size,
             encoding_size=args.encoding_size,
             dropout=args.dropout,
+            pool = args.bert_pooling
             )
 
     elif args.model == "cbow_classifier":
