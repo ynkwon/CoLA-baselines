@@ -92,7 +92,7 @@ def get_parser():
                         help="Output size of encoder, input size of linear")
     parser.add_argument("--encoder_num_layers", type=int, default=1,
                         help="Number of layers in encoder network")
-    parser.add+argument("--bp", "--bert_pooling", type=str, default='avg',
+    parser.add_argument("-bp", "--bert_pooling", type=str, default='avg',
                         help="avg or max")
 
     # Path for LM to be used in ELMo embeddings
