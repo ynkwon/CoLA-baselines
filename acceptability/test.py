@@ -47,16 +47,18 @@ def test(args):
     model.eval()
     embedding.eval()
     outputs = []
+    competition_outputs = []
 
     for data in loader:
-        x, y, _ = data
+        x, y, ind = data
         x, y = Variable(x).long(), Variable(y)
 
         if gpu:
             x = x.cuda()
             y = y.cuda()
 
-        x = embedding(x)
+        if "bert" not in args.embedding:
+            x = embedding(x)
 
         output = model(x)
 
@@ -66,17 +68,20 @@ def test(args):
         output = (out_float > 0.5).long()
         # outputs.append(int(output))
         outputs.append(float(out_float))
+        competition_outputs.append((str(ind), float(out_float)))
 
-        if not gpu:
-            output = output.unsqueeze(0)
-
+        #if not gpu:
+        output = output.unsqueeze(0)
         meter.add(output.data, y.data)
 
     print("Matthews %.5f, Accuracy: %.5f" % (meter.matthews(), meter.accuracy()))
     if args.output_file != None:
         out_file = open(args.output_file, "w")
-        for x in outputs:
-            out_file.write(str(x) + "\n")
+        for ind, out in competition_outputs:
+            out_file.write(ind + " " + str(out) + "\n")
+        #for x in outputs:
+            #out_file.write(str(x) + "\n")
+            
         out_file.close()
 
 
